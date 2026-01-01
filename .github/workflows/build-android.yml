@@ -35,9 +35,6 @@ jobs:
       uses: android-actions/setup-android@v3
       with:
         packages: 'platform-tools build-tools;31.0.0 platforms;android-31'
-      env:
-        # Enable JAXB modules in Java 17
-        JAVA_TOOL_OPTIONS: "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED"
 
     - name: Configure buildozer for pre-installed SDK
       run: |
