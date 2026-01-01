@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=SmartOS
+Comment=Smart Home Operating System
+Exec=smartos
+Icon=smartos
+Terminal=false
+Categories=Utility;System;
+StartupWMClass=SmartOS

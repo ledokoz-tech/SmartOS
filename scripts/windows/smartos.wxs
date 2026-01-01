@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="SmartOS" Language="1033" Version="1.0.0" Manufacturer="Ledokoz" UpgradeCode="12345678-1234-1234-1234-123456789012">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <MediaTemplate />
+
+        <Feature Id="ProductFeature" Title="SmartOS" Level="1">
+            <ComponentGroupRef Id="ProductComponents" />
+        </Feature>
+
+        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+        <UIRef Id="WixUI_InstallDir" />
+    </Product>
+
+    <Fragment>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="SmartOS">
+                    <Directory Id="BinFolder" Name="bin" />
+                    <Directory Id="ConfigFolder" Name="config" />
+                    <Directory Id="EngineFolder" Name="engine" />
+                </Directory>
+            </Directory>
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="SmartOS" />
+            </Directory>
+        </Directory>
+    </Fragment>
+
+    <Fragment>
+        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+            <Component Id="SmartOS.exe" Directory="BinFolder">
+                <File Id="SmartOS.exe" Source="dist\smartos.exe" KeyPath="yes" />
+            </Component>
+            <Component Id="Configuration" Directory="ConfigFolder">
+                <File Id="configuration.yaml" Source="core\config\configuration.yaml" />
+            </Component>
+            <Component Id="Engine" Directory="EngineFolder">
+                <File Id="homeassistant.exe" Source="engine\dist\smartos.exe" />
+            </Component>
+            <Component Id="StartMenuShortcut" Directory="ApplicationProgramsFolder">
+                <Shortcut Id="SmartOSStartMenuShortcut"
+                         Name="SmartOS"
+                         Description="Smart Home Operating System"
+                         Target="[BinFolder]smartos.exe"
+                         WorkingDirectory="INSTALLFOLDER" />
+                <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+                <RegistryValue Root="HKCU" Key="Software\Ledokoz\SmartOS" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

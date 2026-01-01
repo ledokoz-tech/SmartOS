@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# SmartOS AppImage AppRun script
+
+# Set up environment
+export PATH="${APPDIR}/usr/bin:${PATH}"
+export LD_LIBRARY_PATH="${APPDIR}/usr/lib:${LD_LIBRARY_PATH}"
+export PYTHONPATH="${APPDIR}/usr/lib/python3/dist-packages:${PYTHONPATH}"
+
+# Create config directory if it doesn't exist
+CONFIG_DIR="${HOME}/.smartos"
+mkdir -p "${CONFIG_DIR}/config"
+
+# Copy default config if it doesn't exist
+if [ ! -f "${CONFIG_DIR}/config/configuration.yaml" ]; then
+    cp "${APPDIR}/usr/share/smartos/configuration.yaml" "${CONFIG_DIR}/config/" 2>/dev/null || true
+fi
+
+# Change to the SmartOS directory
+cd "${APPDIR}/usr/share/smartos/engine"
+
+# Run SmartOS
+exec python3 -m homeassistant --config "${CONFIG_DIR}/config" "$@"

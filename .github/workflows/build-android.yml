@@ -35,13 +35,9 @@ jobs:
     - name: Configure buildozer
       run: |
         cd android
-        buildozer init
-        # Update buildozer.spec with SmartOS configuration
-        sed -i 's/title = .*/title = SmartOS/' buildozer.spec
-        sed -i 's/package.name = .*/package.name = smartos/' buildozer.spec
-        sed -i 's/package.domain = .*/package.domain = com.ledokoz.smartos/' buildozer.spec
-        sed -i 's/source.dir = .*/source.dir = ../engine/' buildozer.spec
-        sed -i 's/requirements = .*/requirements = python3,kivy,aiohttp,zeroconf/' buildozer.spec
+        # buildozer.spec is already configured with SmartOS settings
+        # Verify the configuration
+        cat buildozer.spec
 
     - name: Build Android APK (debug)
       run: |
@@ -51,12 +47,7 @@ jobs:
     - name: Build Android APK (release)
       run: |
         cd android
-        # Set up signing keystore
-        echo $ANDROID_KEYSTORE | base64 -d > keystore.jks
         buildozer android release
-
-      env:
-        ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
 
     - name: Upload Android builds
       uses: actions/upload-artifact@v4
@@ -82,8 +73,10 @@ jobs:
     - name: Generate AAB from APK
       run: |
         cd android
-        # Convert APK to AAB for Google Play Store
-        bundletool build-bundle --modules=bin/smartos-release-unsigned.apk --output=bin/smartos.aab
+        # Convert APK to AAB for Google Play Store (if bundletool is available)
+        if command -v bundletool &> /dev/null; then
+          bundletool build-bundle --modules=bin/smartos-release-unsigned.apk --output=bin/smartos.aab
+        fi
 
     - name: Upload AAB bundle
       uses: actions/upload-artifact@v4
@@ -102,6 +95,5 @@ jobs:
       with:
         api-level: 29
         script: |
-          cd android
           # Run Android tests if any
           echo "Android tests would run here"
