@@ -39,11 +39,12 @@ jobs:
         chmod +x appimagetool-x86_64.AppImage
 
         # Create AppDir structure
-        mkdir -p AppDir/usr/bin
+        mkdir -p AppDir/usr/bin AppDir/usr/share/smartos
         cp dist/smartos AppDir/usr/bin/
-        cp ../core/branding/smartos_icon.png AppDir/ || cp ../core/branding/smartos.png AppDir/ || echo "No icon found"
-        cp ../scripts/linux/smartos.desktop AppDir/ 2>/dev/null || echo "No desktop file found"
+        cp ../core/branding/smartos_icon.png AppDir/smartos.png 2>/dev/null || echo "Icon not found"
+        cp ../scripts/linux/smartos.desktop AppDir/ 2>/dev/null || echo "Desktop file not found"
         cp ../scripts/linux/AppRun AppDir/
+        cp -r ../core AppDir/usr/share/
 
         # Create AppImage
         ./appimagetool-x86_64.AppImage AppDir SmartOS-x86_64.AppImage
@@ -162,6 +163,7 @@ jobs:
         tags: smartos:arm64
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        load: true
 
     - name: Extract ARM64 binary
       run: |

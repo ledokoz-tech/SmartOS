@@ -25,7 +25,7 @@ mkdir -p "$DEB_DIR/usr/share/applications"
 mkdir -p "$DEB_DIR/usr/share/icons/hicolor/256x256/apps"
 
 # Copy files
-cp "../core/config/configuration.yaml" "$DEB_DIR/usr/share/smartos/"
+cp "../../../core/config/configuration.yaml" "$DEB_DIR/usr/share/smartos/"
 cp "smartos.desktop" "$DEB_DIR/usr/share/applications/"
 cp "../../../core/branding/smartos_icon.png" "$DEB_DIR/usr/share/icons/hicolor/256x256/apps/smartos.png"
 

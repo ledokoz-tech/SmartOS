@@ -42,11 +42,11 @@ parts:
       # Create launch script
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin
       cat > $SNAPCRAFT_PART_INSTALL/bin/smartos-launch << 'EOF'
-#!/bin/bash
-export PYTHONPATH="$SNAP/usr/lib/python3/dist-packages:$SNAP/lib/python3.10/site-packages"
-cd $SNAP
-exec python3 -m homeassistant --config $HOME/.smartos/config
-EOF
+      #!/bin/bash
+      export PYTHONPATH="$SNAP/usr/lib/python3/dist-packages:$SNAP/lib/python3.10/site-packages"
+      cd $SNAP
+      exec python3 -m homeassistant --config $HOME/.smartos/config
+      EOF
       chmod +x $SNAPCRAFT_PART_INSTALL/bin/smartos-launch
 
   config:

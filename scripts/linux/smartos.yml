@@ -1,6 +1,6 @@
 app-id: com.ledokoz.smartos
 runtime: org.freedesktop.Platform
-runtime-version: '23.08'
+runtime-version: '22.08'
 sdk: org.freedesktop.Sdk
 
 command: smartos
@@ -20,9 +20,15 @@ modules:
     build-commands:
       - mkdir -p /app/bin
       - mkdir -p /app/share/smartos
-      - cp -r ../engine /app/share/smartos/
-      - cp ../core/config/configuration.yaml /app/share/smartos/
-      - ln -s /app/share/smartos/engine/homeassistant /app/bin/hass
+      - cp -r ../../../engine /app/share/smartos/
+      - cp ../../../core/config/configuration.yaml /app/share/smartos/
+      - pip3 install --prefix=/app -r /app/share/smartos/engine/requirements.txt
+      - cat > /app/bin/smartos << 'EOF'
+        #!/bin/bash
+        cd /app/share/smartos/engine
+        exec python3 -m homeassistant --config $HOME/.smartos/config
+        EOF
+      - chmod +x /app/bin/smartos
     sources:
       - type: dir
         path: ../../..
@@ -31,18 +37,3 @@ modules:
           - tests
           - __pycache__
           - "*.pyc"
-
-  - name: python3-aiohttp
-    buildsystem: simple
-    build-commands:
-      - pip3 install --no-deps --prefix=/app aiohttp
-    sources:
-      - type: archive
-        url: https://pypi.org/packages/source/a/aiohttp/aiohttp-3.9.1.tar.gz
-        sha256: 8fc49a87ac269d02c5c4a8c8b95d2d6b1b5b5b1b5b5b5b5b5b5b5b5b5b5b5b5b5b5
-
-  - name: python3-dependencies
-    buildsystem: simple
-    build-commands:
-      - pip3 install --no-deps --prefix=/app zeroconf bcrypt PyJWT pyOpenSSL orjson SQLAlchemy pillow
-    sources: []
