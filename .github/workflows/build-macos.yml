@@ -27,7 +27,12 @@ jobs:
     - name: Build macOS Intel app
       run: |
         cd engine
-        pyinstaller --onefile --windowed --name smartos --icon ../core/branding/smartos.icns homeassistant/__main__.py
+        # Use icon if it exists, otherwise build without icon
+        if [ -f ../core/branding/smartos.icns ]; then
+          pyinstaller --onefile --windowed --name smartos --icon ../core/branding/smartos.icns homeassistant/__main__.py
+        else
+          pyinstaller --onefile --windowed --name smartos homeassistant/__main__.py
+        fi
 
     - name: Create macOS app bundle
       run: |
@@ -75,7 +80,12 @@ jobs:
     - name: Build macOS Apple Silicon app
       run: |
         cd engine
-        pyinstaller --onefile --windowed --name smartos-arm64 --icon ../core/branding/smartos.icns homeassistant/__main__.py
+        # Use icon if it exists, otherwise build without icon
+        if [ -f ../core/branding/smartos.icns ]; then
+          pyinstaller --onefile --windowed --name smartos-arm64 --icon ../core/branding/smartos.icns homeassistant/__main__.py
+        else
+          pyinstaller --onefile --windowed --name smartos-arm64 homeassistant/__main__.py
+        fi
 
     - name: Create macOS app bundle
       run: |

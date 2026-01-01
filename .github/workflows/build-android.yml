@@ -34,6 +34,8 @@ jobs:
 
     - name: Configure buildozer
       run: |
+        # Create android directory if it doesn't exist
+        mkdir -p android
         cd android
         # buildozer.spec is already configured with SmartOS settings
         # Verify the configuration

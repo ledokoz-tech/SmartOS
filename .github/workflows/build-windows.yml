@@ -28,7 +28,12 @@ jobs:
     - name: Build Windows executable
       run: |
         cd engine
-        pyinstaller --onefile --windowed --name smartos --icon ../core/branding/smartos.ico homeassistant/__main__.py
+        # Use icon if it exists, otherwise build without icon
+        if [ -f ../core/branding/smartos.ico ]; then
+          pyinstaller --onefile --windowed --name smartos --icon ../core/branding/smartos.ico homeassistant/__main__.py
+        else
+          pyinstaller --onefile --windowed --name smartos homeassistant/__main__.py
+        fi
 
     - name: Create MSI installer
       run: |
@@ -49,31 +54,37 @@ jobs:
           engine/dist/smartos.exe
           engine/smartos-*.msi
 
-  build-windows-arm64:
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.13'
-        architecture: 'arm64'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r engine/requirements.txt
-        pip install pyinstaller
-
-    - name: Build Windows ARM64 executable
-      run: |
-        cd engine
-        pyinstaller --onefile --windowed --name smartos-arm64 --icon ../core/branding/smartos.ico homeassistant/__main__.py
-
-    - name: Upload Windows ARM64 build
-      uses: actions/upload-artifact@v4
-      with:
-        name: smartos-windows-arm64
-        path: engine/dist/smartos-arm64.exe
+  # Temporarily disabled due to Python ARM64 setup issues on Windows
+  # build-windows-arm64:
+  #   runs-on: windows-latest
+  #
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.13'
+  #       architecture: 'arm64'
+  #
+  #   - name: Install dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r engine/requirements.txt
+  #       pip install pyinstaller
+  #
+  #   - name: Build Windows ARM64 executable
+  #     run: |
+  #       cd engine
+  #       # Use icon if it exists, otherwise build without icon
+  #       if [ -f ../core/branding/smartos.ico ]; then
+  #         pyinstaller --onefile --windowed --name smartos-arm64 --icon ../core/branding/smartos.ico homeassistant/__main__.py
+  #       else
+  #         pyinstaller --onefile --windowed --name smartos-arm64 homeassistant/__main__.py
+  #       fi
+  #
+  #   - name: Upload Windows ARM64 build
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: smartos-windows-arm64
+  #       path: engine/dist/smartos-arm64.exe

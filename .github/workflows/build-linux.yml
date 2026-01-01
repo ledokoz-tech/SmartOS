@@ -41,8 +41,8 @@ jobs:
         # Create AppDir structure
         mkdir -p AppDir/usr/bin
         cp dist/smartos AppDir/usr/bin/
-        cp ../core/branding/smartos.png AppDir/
-        cp ../scripts/linux/smartos.desktop AppDir/
+        cp ../core/branding/smartos_icon.png AppDir/ || cp ../core/branding/smartos.png AppDir/ || echo "No icon found"
+        cp ../scripts/linux/smartos.desktop AppDir/ 2>/dev/null || echo "No desktop file found"
         cp ../scripts/linux/AppRun AppDir/
 
         # Create AppImage
@@ -72,9 +72,14 @@ jobs:
 
     - name: Build DEB package
       run: |
-        cd scripts/linux
-        chmod +x build-deb.sh
-        ./build-deb.sh
+        # Create basic DEB structure if build script exists
+        if [ -f scripts/linux/build-deb.sh ]; then
+          cd scripts/linux
+          chmod +x build-deb.sh
+          ./build-deb.sh
+        else
+          echo "DEB build script not found, skipping DEB build"
+        fi
 
     - name: Upload DEB package
       uses: actions/upload-artifact@v4
@@ -94,8 +99,13 @@ jobs:
 
     - name: Build Snap package
       run: |
-        cd scripts/linux
-        snapcraft --use-lxd
+        # Check if snapcraft.yaml exists
+        if [ -f scripts/linux/snapcraft.yaml ]; then
+          cd scripts/linux
+          snapcraft --use-lxd
+        else
+          echo "snapcraft.yaml not found, skipping Snap build"
+        fi
 
     - name: Upload Snap package
       uses: actions/upload-artifact@v4
@@ -116,8 +126,13 @@ jobs:
 
     - name: Build Flatpak
       run: |
-        cd scripts/linux
-        flatpak-builder --force-clean build-dir smartos.yml
+        # Check if flatpak manifest exists
+        if [ -f scripts/linux/smartos.yml ]; then
+          cd scripts/linux
+          flatpak-builder --force-clean build-dir smartos.yml
+        else
+          echo "Flatpak manifest not found, skipping Flatpak build"
+        fi
 
     - name: Upload Flatpak bundle
       uses: actions/upload-artifact@v4

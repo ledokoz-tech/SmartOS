@@ -43,9 +43,10 @@ jobs:
         if [ -d "smartos-windows-x64" ]; then
           cp smartos-windows-x64/* releases/
         fi
-        if [ -d "smartos-windows-arm64" ]; then
-          cp smartos-windows-arm64/* releases/
-        fi
+        # Windows ARM64 temporarily disabled due to build issues
+        # if [ -d "smartos-windows-arm64" ]; then
+        #   cp smartos-windows-arm64/* releases/
+        # fi
 
         # macOS
         if [ -d "smartos-macos-intel" ]; then
