@@ -19,7 +19,7 @@ This project includes or depends on the following third-party components:
 **Version**: 2026.2.0.dev0
 **License**: Apache License 2.0
 **Copyright**: The Home Assistant Authors
-**Source**: https://github.com/home-assistant/core
+**Source**: <https://github.com/home-assistant/core>
 **Notice**: Home Assistant is included in the `/engine` directory and is used as the core smart home automation engine.
 
 ### Python Dependencies
@@ -56,12 +56,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ## Contact Information
 
 For licensing questions or commercial inquiries:
-- Email: legal@ledokoz.com
-- Website: https://ledokoz.com
+
+- Email: <legal@ledokoz.com>
+- Website: <https://ledokoz.com>
 
 ## Compliance
 
 This project complies with:
+
 - MIT License terms
 - Apache License 2.0 terms (for Home Assistant components)
 - All applicable open source license requirements
