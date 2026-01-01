@@ -22,6 +22,12 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
 
+    - name: Set up Java 11 for Android SDK compatibility
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
