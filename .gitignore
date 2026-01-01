@@ -27,7 +27,7 @@ MANIFEST
 
 # PyInstaller
 *.manifest
-*.spec
+# *.spec  # Commented out to allow buildozer.spec files
 *.exe
 *.dmg
 *.app
@@ -95,6 +95,10 @@ android/bin/
 android/.buildozer/
 ios/build/
 ios/dist/
+
+# Keep buildozer configuration files (not build artifacts)
+!android/buildozer.spec
+!ios/buildozer.spec
 
 # Docker
 .dockerignore
