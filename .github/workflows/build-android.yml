@@ -34,7 +34,7 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
       with:
-        packages: 'platform-tools build-tools;31.0.0 platforms;android-31'
+        packages: 'platform-tools build-tools;31.0.0 platforms;android-31 cmdline-tools;latest'
 
     - name: Configure buildozer for pre-installed SDK
       run: |
