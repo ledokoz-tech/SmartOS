@@ -32,6 +32,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install buildozer cython
 
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 31
+        target: default
+        arch: x86_64
+        components: 'platform-tools,build-tools;31.0.0,platforms;android-31'
+
     - name: Configure buildozer
       run: |
         # Check if android directory and buildozer.spec exist

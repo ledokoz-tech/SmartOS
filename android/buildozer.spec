@@ -65,3 +65,15 @@ android.manifest.launch_mode = singleTop
 
 # (bool) Private storage
 android.private_storage = True
+
+# (bool) If True, then skip trying to update the Android sdk
+android.skip_update = True
+
+# (str) Android SDK directory (use pre-installed SDK)
+android.sdk_path = /usr/local/lib/android/sdk
+
+# (str) Android NDK directory (if empty, it will be automatically downloaded.)
+android.ndk_path =
+
+# (str) Android SDK license acceptance (for CI)
+android.accept_sdk_license = True
