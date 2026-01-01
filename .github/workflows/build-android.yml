@@ -34,7 +34,7 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
       with:
-        cmdline-tools-version: '8.0'
+        cmdline-tools-version: '9.0'
         packages: 'platform-tools build-tools;31.0.0 platforms;android-31'
       env:
         # Enable JAXB modules in Java 17
