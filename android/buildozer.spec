@@ -75,8 +75,5 @@ android.sdk_path = /usr/local/lib/android/sdk
 # (str) Android NDK path (use pre-installed NDK)
 android.ndk_path = /usr/local/lib/android/sdk/ndk/27.3.13750724
 
-# (str) Android NDK directory (if empty, it will be automatically downloaded.)
-android.ndk_path =
-
 # (str) Android SDK license acceptance (for CI)
 android.accept_sdk_license = True
