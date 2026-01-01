@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  smartos:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: smartos
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+    volumes:
+      - ../config:/config
+      - smartos_data:/data
+      - smartos_ssl:/ssl
+    environment:
+      - TZ=UTC
+      - HASS_CONFIG=/config
+    networks:
+      - smartos_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123/api/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.smartos.rule=Host(`smartos.local`)"
+      - "traefik.http.services.smartos.loadbalancer.server.port=8123"
+
+  # Optional: Database service
+  database:
+    image: postgres:15-alpine
+    container_name: smartos_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smartos
+      POSTGRES_USER: smartos
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-smartos_password}
+    volumes:
+      - smartos_db:/var/lib/postgresql/data
+    networks:
+      - smartos_network
+    profiles:
+      - db
+
+  # Optional: Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: smartos_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - smartos_redis:/data
+    networks:
+      - smartos_network
+    profiles:
+      - cache
+
+  # Optional: Traefik reverse proxy
+  traefik:
+    image: traefik:v2.10
+    container_name: smartos_traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - smartos_network
+    profiles:
+      - proxy
+
+volumes:
+  smartos_data:
+    driver: local
+  smartos_ssl:
+    driver: local
+  smartos_db:
+    driver: local
+  smartos_redis:
+    driver: local
+
+networks:
+  smartos_network:
+    driver: bridge

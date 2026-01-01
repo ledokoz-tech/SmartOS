@@ -1,0 +1,68 @@
+# SmartOS Notice
+
+## Copyright Notice
+
+SmartOS - Custom Home Assistant by Ledokoz
+Copyright (c) 2025 Ledokoz
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Third Party Components
+
+This project includes or depends on the following third-party components:
+
+### Home Assistant Core
+
+**Component**: Home Assistant
+**Version**: 2026.2.0.dev0
+**License**: Apache License 2.0
+**Copyright**: The Home Assistant Authors
+**Source**: https://github.com/home-assistant/core
+**Notice**: Home Assistant is included in the `/engine` directory and is used as the core smart home automation engine.
+
+### Python Dependencies
+
+For a complete list of Python dependencies and their licenses, see [THIRD_PARTY.md](THIRD_PARTY.md).
+
+## Attribution Requirements
+
+### Home Assistant Attribution
+
+SmartOS is built on top of Home Assistant. The following attribution is required:
+
+"SmartOS includes Home Assistant (Apache 2.0 licensed) as its core engine."
+
+Home Assistant trademarks and branding may not be used in derivative works without permission.
+
+### Open Source Licenses
+
+All third-party components maintain their original licenses. Users of SmartOS must comply with all applicable open source licenses.
+
+## Commercial Use
+
+SmartOS is licensed under MIT, which allows commercial use. However:
+
+1. **Home Assistant Compatibility**: Commercial use must not violate Home Assistant's Apache 2.0 license
+2. **Trademark Compliance**: "Home Assistant" trademarks may not be used in commercial products
+3. **Attribution**: Proper attribution must be maintained
+4. **Support**: Commercial support is available through Ledokoz
+
+## Warranty Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+## Contact Information
+
+For licensing questions or commercial inquiries:
+- Email: legal@ledokoz.com
+- Website: https://ledokoz.com
+
+## Compliance
+
+This project complies with:
+- MIT License terms
+- Apache License 2.0 terms (for Home Assistant components)
+- All applicable open source license requirements
+- GDPR and data protection regulations (where applicable)

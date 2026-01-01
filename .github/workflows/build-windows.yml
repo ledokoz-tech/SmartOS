@@ -1,0 +1,79 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+        architecture: 'x64'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r engine/requirements.txt
+        pip install pyinstaller
+
+    - name: Build Windows executable
+      run: |
+        cd engine
+        pyinstaller --onefile --windowed --name smartos --icon ../core/branding/smartos.ico homeassistant/__main__.py
+
+    - name: Create MSI installer
+      run: |
+        # Install WiX Toolset
+        choco install wixtoolset
+
+        # Create MSI
+        cd engine
+        $version = if ($env:GITHUB_REF -match 'refs/tags/v(.+)') { $matches[1] } else { "dev" }
+        & "C:\Program Files (x86)\WiX Toolset v3.14\bin\candle.exe" ../scripts/windows/smartos.wxs -dVersion=$version
+        & "C:\Program Files (x86)\WiX Toolset v3.14\bin\light.exe" smartos.wixobj -out smartos-$version.msi
+
+    - name: Upload Windows build
+      uses: actions/upload-artifact@v4
+      with:
+        name: smartos-windows-x64
+        path: |
+          engine/dist/smartos.exe
+          engine/smartos-*.msi
+
+  build-windows-arm64:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+        architecture: 'arm64'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r engine/requirements.txt
+        pip install pyinstaller
+
+    - name: Build Windows ARM64 executable
+      run: |
+        cd engine
+        pyinstaller --onefile --windowed --name smartos-arm64 --icon ../core/branding/smartos.ico homeassistant/__main__.py
+
+    - name: Upload Windows ARM64 build
+      uses: actions/upload-artifact@v4
+      with:
+        name: smartos-windows-arm64
+        path: engine/dist/smartos-arm64.exe

@@ -1,0 +1,104 @@
+name: Build macOS
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  build-macos-intel:
+    runs-on: macos-13
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r engine/requirements.txt
+        pip install pyinstaller
+
+    - name: Build macOS Intel app
+      run: |
+        cd engine
+        pyinstaller --onefile --windowed --name smartos --icon ../core/branding/smartos.icns homeassistant/__main__.py
+
+    - name: Create macOS app bundle
+      run: |
+        cd engine
+        # Create app bundle structure
+        mkdir -p dist/SmartOS.app/Contents/MacOS
+        mkdir -p dist/SmartOS.app/Contents/Resources
+        cp dist/smartos dist/SmartOS.app/Contents/MacOS/
+        cp ../core/branding/smartos.icns dist/SmartOS.app/Contents/Resources/
+        cp ../scripts/macos/Info.plist dist/SmartOS.app/Contents/
+
+    - name: Create DMG
+      run: |
+        # Install create-dmg
+        brew install create-dmg
+
+        cd engine/dist
+        create-dmg --volname "SmartOS" --volicon ../core/branding/smartos.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --icon SmartOS.app 200 190 --hide-extension SmartOS.app --app-drop-link 600 185 SmartOS.dmg SmartOS.app
+
+    - name: Upload macOS Intel build
+      uses: actions/upload-artifact@v4
+      with:
+        name: smartos-macos-intel
+        path: |
+          engine/dist/smartos
+          engine/dist/SmartOS.dmg
+
+  build-macos-apple-silicon:
+    runs-on: macos-14
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r engine/requirements.txt
+        pip install pyinstaller
+
+    - name: Build macOS Apple Silicon app
+      run: |
+        cd engine
+        pyinstaller --onefile --windowed --name smartos-arm64 --icon ../core/branding/smartos.icns homeassistant/__main__.py
+
+    - name: Create macOS app bundle
+      run: |
+        cd engine
+        # Create app bundle structure
+        mkdir -p dist/SmartOS.app/Contents/MacOS
+        mkdir -p dist/SmartOS.app/Contents/Resources
+        cp dist/smartos-arm64 dist/SmartOS.app/Contents/MacOS/smartos
+        cp ../core/branding/smartos.icns dist/SmartOS.app/Contents/Resources/
+        cp ../scripts/macos/Info.plist dist/SmartOS.app/Contents/
+
+    - name: Create DMG
+      run: |
+        # Install create-dmg
+        brew install create-dmg
+
+        cd engine/dist
+        create-dmg --volname "SmartOS" --volicon ../core/branding/smartos.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --icon SmartOS.app 200 190 --hide-extension SmartOS.app --app-drop-link 600 185 SmartOS-arm64.dmg SmartOS.app
+
+    - name: Upload macOS Apple Silicon build
+      uses: actions/upload-artifact@v4
+      with:
+        name: smartos-macos-arm64
+        path: |
+          engine/dist/smartos-arm64
+          engine/dist/SmartOS-arm64.dmg

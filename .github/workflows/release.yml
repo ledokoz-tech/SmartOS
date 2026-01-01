@@ -1,0 +1,177 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get version from tag
+      id: get_version
+      run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Download all build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts/
+
+    - name: Create release archives
+      run: |
+        cd artifacts
+
+        # Create platform-specific archives
+        mkdir -p releases
+
+        # Linux
+        if [ -d "smartos-linux-appimage" ]; then
+          cp smartos-linux-appimage/* releases/
+        fi
+        if [ -d "smartos-linux-deb" ]; then
+          cp smartos-linux-deb/* releases/
+        fi
+        if [ -d "smartos-linux-arm64" ]; then
+          cp smartos-linux-arm64/* releases/
+        fi
+
+        # Windows
+        if [ -d "smartos-windows-x64" ]; then
+          cp smartos-windows-x64/* releases/
+        fi
+        if [ -d "smartos-windows-arm64" ]; then
+          cp smartos-windows-arm64/* releases/
+        fi
+
+        # macOS
+        if [ -d "smartos-macos-intel" ]; then
+          cp smartos-macos-intel/* releases/
+        fi
+        if [ -d "smartos-macos-arm64" ]; then
+          cp smartos-macos-arm64/* releases/
+        fi
+
+        # Android
+        if [ -d "smartos-android" ]; then
+          cp smartos-android/* releases/
+        fi
+
+        # iOS
+        if [ -d "smartos-ios" ]; then
+          cp smartos-ios/* releases/
+        fi
+
+        # Create checksums
+        cd releases
+        sha256sum * > SHA256SUMS.txt
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: SmartOS ${{ steps.get_version.outputs.version }}
+        body: |
+          ## SmartOS ${{ steps.get_version.outputs.version }}
+
+          This release includes SmartOS for multiple platforms.
+
+          ### Downloads
+
+          #### Linux
+          - `SmartOS-x86_64.AppImage` - Linux AppImage (x86_64)
+          - `smartos_*.deb` - Debian/Ubuntu package
+          - `smartos-arm64` - Linux ARM64 binary
+
+          #### Windows
+          - `smartos.exe` - Windows executable (x64)
+          - `smartos-arm64.exe` - Windows ARM64 executable
+          - `smartos-*.msi` - Windows installer
+
+          #### macOS
+          - `SmartOS.dmg` - macOS Intel installer
+          - `SmartOS-arm64.dmg` - macOS Apple Silicon installer
+
+          #### Mobile
+          - `smartos-*.apk` - Android APK
+          - `smartos-*.aab` - Android App Bundle
+          - `SmartOS.ipa` - iOS IPA (TestFlight)
+
+          ### Installation
+
+          **Docker (Recommended):**
+          ```bash
+          docker run -d -p 8123:8123 ghcr.io/ledokoz-tech/smartos:${{ steps.get_version.outputs.version }}
+          ```
+
+          **Native Installation:**
+          Download the appropriate file for your platform and follow the installation instructions in the documentation.
+
+          ### What's New
+
+          See [CHANGELOG.md](https://github.com/ledokoz-tech/smartos/blob/main/CHANGELOG.md) for details.
+
+          ### Support
+
+          - Documentation: https://docs.smartos.ledokoz.com
+          - Issues: https://github.com/ledokoz-tech/smartos/issues
+          - Discussions: https://github.com/ledokoz-tech/smartos/discussions
+        files: artifacts/releases/*
+        draft: false
+        prerelease: ${{ contains(steps.get_version.outputs.version, 'rc') || contains(steps.get_version.outputs.version, 'beta') || contains(steps.get_version.outputs.version, 'alpha') }}
+
+  docker-release:
+    runs-on: ubuntu-latest
+    needs: release
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get version from tag
+      id: get_version
+      run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/ledokoz-tech/smartos
+        tags: |
+          type=ref,event=tag
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  deploy-docs:
+    runs-on: ubuntu-latest
+    needs: release
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy documentation
+      run: |
+        # Deploy docs to GitHub Pages or external hosting
+        echo "Documentation deployment would happen here"

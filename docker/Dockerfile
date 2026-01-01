@@ -1,0 +1,64 @@
+# SmartOS Docker Image
+FROM python:3.13-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libfreetype6-dev \
+    liblcms2-dev \
+    libopenjp2-7-dev \
+    libtiff5-dev \
+    tk-dev \
+    tcl-dev \
+    linux-libc-dev \
+    libbluetooth-dev \
+    bluetooth \
+    bluez \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create smartos user
+RUN useradd --create-home --shell /bin/bash smartos
+
+# Set working directory
+WORKDIR /home/smartos
+
+# Copy requirements first for better caching
+COPY engine/requirements.txt /tmp/
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Copy SmartOS engine
+COPY engine/ /home/smartos/engine/
+
+# Copy SmartOS core
+COPY core/ /home/smartos/core/
+
+# Create necessary directories
+RUN mkdir -p /config /data /ssl
+
+# Set permissions
+RUN chown -R smartos:smartos /home/smartos /config /data /ssl
+
+# Switch to smartos user
+USER smartos
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8123/api/ || exit 1
+
+# Expose port
+EXPOSE 8123
+
+# Set default command
+CMD ["python", "-m", "homeassistant", "--config", "/config"]

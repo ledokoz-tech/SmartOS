@@ -1,0 +1,72 @@
+# SmartOS Configuration
+# This is the main configuration file for SmartOS
+
+# Home Assistant Core Configuration
+homeassistant:
+  name: SmartOS
+  latitude: !secret latitude
+  longitude: !secret longitude
+  elevation: !secret elevation
+  unit_system: metric
+  time_zone: !secret time_zone
+  currency: !secret currency
+
+  # External access
+  external_url: !secret external_url
+  internal_url: !secret internal_url
+
+# SmartOS Custom Components
+smartos:
+  branding:
+    name: "SmartOS"
+    logo: "/static/smartos-logo.png"
+    theme: "smartos"
+
+  # User management
+  users:
+    admin:
+      username: !secret admin_username
+      password: !secret admin_password
+      role: owner
+
+  # Device management
+  devices:
+    auto_discovery: true
+    allowed_types:
+      - light
+      - switch
+      - sensor
+      - climate
+      - media_player
+      - camera
+
+  # Security settings
+  security:
+    local_only: true
+    remote_access: false
+    guest_mode: false
+
+# Default integrations
+default_config:
+
+# HTTP configuration
+http:
+  server_host: 0.0.0.0
+  server_port: 8123
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+
+# Frontend configuration
+frontend:
+  themes: !include_dir_merge_named themes/
+
+# Automation
+automation: !include automations.yaml
+
+# Scripts
+script: !include scripts.yaml
+
+# Scenes
+scene: !include scenes.yaml
