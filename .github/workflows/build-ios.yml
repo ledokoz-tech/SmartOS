@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-ios-app:
-    runs-on: macos-14
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
         path: ios/dist/SmartOS.ipa
 
   build-ios-simulator:
-    runs-on: macos-14
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -93,7 +93,7 @@ jobs:
         path: ios/build/SmartOS.app
 
   test-ios:
-    runs-on: macos-14
+    runs-on: macos-latest
     needs: build-ios-simulator
 
     steps:
@@ -117,7 +117,7 @@ jobs:
         xcodebuild test -project SmartOS-ios.xcodeproj -scheme SmartOS -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
 
   deploy-testflight:
-    runs-on: macos-14
+    runs-on: macos-latest
     needs: [build-ios-app, test-ios]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
