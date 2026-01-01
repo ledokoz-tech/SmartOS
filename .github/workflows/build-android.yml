@@ -43,6 +43,10 @@ jobs:
         echo 'android.sdk_path = /usr/local/lib/android/sdk' > ~/.buildozer/android.cfg
         echo 'android.ndk_path = /usr/local/lib/android/sdk/ndk/27.3.13750724' >> ~/.buildozer/android.cfg
 
+        # Create symlink for sdkmanager in expected location
+        sudo mkdir -p /usr/local/lib/android/sdk/tools/bin
+        sudo ln -sf /usr/local/lib/android/sdk/cmdline-tools/11.0/bin/sdkmanager /usr/local/lib/android/sdk/tools/bin/sdkmanager
+
     - name: Configure buildozer
       run: |
         # Check if android directory and buildozer.spec exist
