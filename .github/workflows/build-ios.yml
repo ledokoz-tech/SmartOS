@@ -30,8 +30,15 @@ jobs:
 
     - name: Set up iOS build environment
       run: |
-        # Create ios directory if it doesn't exist
-        mkdir -p ios
+        # Check if ios directory and buildozer.spec exist
+        if [ ! -d ios ]; then
+          echo "ERROR: ios directory not found"
+          exit 1
+        fi
+        if [ ! -f ios/buildozer.spec ]; then
+          echo "ERROR: ios/buildozer.spec not found"
+          exit 1
+        fi
         cd ios
         # Initialize kivy-ios
         kivy-ios init

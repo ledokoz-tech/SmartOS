@@ -34,12 +34,18 @@ jobs:
 
     - name: Configure buildozer
       run: |
-        # Create android directory if it doesn't exist
-        mkdir -p android
+        # Check if android directory and buildozer.spec exist
+        if [ ! -d android ]; then
+          echo "ERROR: android directory not found"
+          exit 1
+        fi
+        if [ ! -f android/buildozer.spec ]; then
+          echo "ERROR: buildozer.spec not found"
+          exit 1
+        fi
         cd android
-        # buildozer.spec is already configured with SmartOS settings
-        # Verify the configuration
-        cat buildozer.spec
+        echo "buildozer.spec configuration:"
+        head -20 buildozer.spec
 
     - name: Build Android APK (debug)
       run: |
