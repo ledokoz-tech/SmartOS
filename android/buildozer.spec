@@ -72,6 +72,9 @@ android.skip_update = True
 # (str) Android SDK directory (use pre-installed SDK)
 android.sdk_path = /usr/local/lib/android/sdk
 
+# (str) Android NDK path (download if needed)
+# android.ndk_path =
+
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
 android.ndk_path =
 
